@@ -29,8 +29,8 @@ sol_t=ode15s(@(t,X)rhs(t,X,epsilon,h,alpha,k,T,c,c_theta,omega,delta,g),[0,5000]
 
     function [dX]=rhs(~,X,epsilon,h,alpha,k,T,c,c_theta,omega,delta,g)
         heav=(1+sign(sqrt(X(1)^2+X(2)^2)-delta))/2;
-        f=alpha*heav*(1-delta/sqrt(X(1)^2+X(2)^2))*h^2/(h^2-X(1)^2-X(2)^2);
-        %f=alpha*heav*(1-delta/sqrt(X(1)^2+X(2)^2));
+        %f=alpha*heav*(1-delta/sqrt(X(1)^2+X(2)^2))*h^2/(h^2-X(1)^2-X(2)^2);
+        f=alpha*heav*(1-delta/sqrt(X(1)^2+X(2)^2));
         dX=[0,0,0,1,0,0;...
             0,0,0,0,1,0;...
             0,0,0,0,0,1;...

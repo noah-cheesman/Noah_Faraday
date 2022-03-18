@@ -1,7 +1,10 @@
-function make_data_figures(sols,pars)
-[parname,parvalues]=find_varying_parameter(pars)
+function make_data_figures(sols,pars,currDate)
+[parname,parvalues]=find_varying_parameter(pars,sols);
 xtix=cellstr(num2str((parvalues)))';
-figure;hold on;
+
+
+
+figures(1)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     W=sols{i}.y;
     % how much would you like to plot? Last 0.1 of time?
@@ -13,12 +16,29 @@ end
 xlabel(parname)
 xticks(1:length(parvalues));
 xticklabels(xtix)
+view(-45,30)
 ylabel('$x$','Interpreter','Latex')
 zlabel('$y$','Interpreter','Latex')
 title('Orbits in stationary frame','Interpreter','Latex')
 
+figures(2)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+for i =1:length(sols)
+    W=sols{i}.y;
+    % how much would you like to plot? Last 0.1 of time?
+    last=0.1;
+    W=W(:,ceil(end*(1-last)):end);
+    % plot orbits in yz with parameter iterate in x axis
+    plot3(i*ones(size(W(1,:)))+0.25*(W(4,:))/max(W(4,:)),W(1,:),W(2,:),'-')
+end
+xlabel(parname)
+xticks(1:length(parvalues));
+xticklabels(xtix)
+view(-45,30)
+ylabel('$x$','Interpreter','Latex')
+zlabel('$y$','Interpreter','Latex')
+title('Orbits in stationary frame','Interpreter','Latex')
 
-figure;hold on;
+figures(3)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     W=sols{i}.y;
     last=0.1;
@@ -32,12 +52,13 @@ end
 xlabel(parname)
 xticks(1:length(parvalues));
 xticklabels(xtix)
+view(-45,30)
 ylabel('$\tilde{x}$','Interpreter','Latex')
 zlabel('$\tilde{y}$','Interpreter','Latex')
 title('Orbits in rotating frame','Interpreter','Latex')
 
 % plots hi low bifurcation diagram
-figure;hold on
+figures(4)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     W=sols{i}.y;
     last=0.1;
@@ -58,7 +79,7 @@ ylabel('$\tilde{x}$','Interpreter','Latex')
 title('min/max $\tilde{x}$ bif diagram','Interpreter','Latex')
 
 
-figure;hold on;
+figures(5)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     W=sols{i}.y;
     t=sols{i}.x;
@@ -66,7 +87,11 @@ for i =1:length(sols)
     W=W(:,ceil(end*(1-last)):end);
     t=t(ceil(end*(1-last)):end);
     plot(t,((W(6,:))),'-');
+    if length(pars.T)>1
     omega_s=pars.omega(i)*pars.T(i)/(pars.T(i)+pars.c_theta(i));
+    else
+        omega_s=pars.omega*pars.T/(pars.T+pars.c_theta);
+    end
     plot([min(t),max(t)],omega_s*[1,1],'--')
 end
 ylabel('$\dot{\theta}$','Interpreter','Latex');
@@ -74,7 +99,7 @@ xlabel('$t$','Interpreter','Latex');
 title('angular velocity of rotor compared to driven speed','Interpreter','Latex')
 
 
-figure;hold on;
+figures(6)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     We=sols{i}.ye;
     last=0.1;
@@ -88,14 +113,19 @@ xticklabels(xtix)
 title('Poincare section bif diagram','Interpreter','Latex')
 
 
-figure;hold on;
+figures(7)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 maxi=[];
 mini=[];
-xmax=5;
+xmax=1;
 for i =1:length(sols)
     sol=sols{i};
-    [~,freq_vec,Spec]=perfect(sol,pars.omega(i));
-    freq=pars.omega(i)^2;
+    if length(pars.omega)>1
+        omega=pars.omega(i);
+    else
+        omega=pars.omega;
+    end
+    [~,freq_vec,Spec]=perfect(sol,omega);
+    freq=pars.omega^2;
     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
     maxi=max([maxi,max(log(Spec))]);
     mini=min([mini,min(log(Spec))]);
@@ -110,22 +140,56 @@ xticklabels(xtix)
 view(90,00);
 title('fft of $I_\mathrm{res}$','Interpreter','Latex');
 
-figure;hold on;
+figures(8)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 maxi=[];
 mini=[];
 for i =1:length(sols)
     sol=sols{i};
-    [freq_vec,Spec]=perfect_x(sol,pars.omega(i));
-    freq=pars.omega(i)^2;
+    if length(pars.omega)>1
+        omega=pars.omega(i);
+    else
+        omega=pars.omega;
+    end
+    [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
+    freq=pars.omega^2;
     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
     maxi=max([maxi,max(log(Spec))]);
     mini=min([mini,min(log(Spec))]);
     ylim([ 0 xmax])
 end
-plot_farey_3d(mini,maxi,ceil(xmax))
+%plot_farey_3d(mini,maxi,ceil(xmax))
 ylabel('$\omega/\Omega$','Interpreter','Latex');
 title('fft of $x$','Interpreter','Latex');
 view(90,00)
+
+figures(9)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on;
+maxi=[];
+mini=[];
+for i =1:length(sols)
+    sol=sols{i};
+    if length(pars.omega)>1
+        omega=pars.omega(i);
+    else
+        omega=pars.omega;
+    end
+    [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
+    freq=omega^2;
+%     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
+    plot3(i*ones(size(cfreq)),cfreq/freq,log(abs(Z)),'-')
+    maxi=max([maxi,max(log(abs(Z)))]);
+    mini=min([mini,min(log(abs(Z)))]);
+     ylim([ -10 10])
+end
+% plot_farey_3d(mini,maxi,ceil(xmax))
+ylabel('$\omega/\Omega$','Interpreter','Latex');
+title('fft of $x+ j y $','Interpreter','Latex');
+view(90,00)
+
+
+for figcount=1:length(figures)
+    savefig(figures(figcount),[currDate,'/fig',num2str(figcount),'.fig'])
+    saveas(figures(figcount),[currDate,'/fig',num2str(figcount),'.pdf'])
+end
 
 end
 
@@ -162,7 +226,8 @@ Spec(2:end-1) = 2*Spec(2:end-1);
 freq_vec = Fs*(0:(L/2))/L;
 end
 
-function [freq_vec,Spec]=perfect_x(ODESol_struct,Omega)
+
+function [freq_vec,Spec,Z,cfreq]=perfect_x(ODESol_struct,Omega)
 ts=ODESol_struct.x;
 %t_0 = ts(end)*0.75; %Where to start calculating Fourier transform from
 t_1=ts(end);
@@ -192,6 +257,16 @@ Spec = spec_b(1:L/2+1);
 Spec(2:end-1) = 2*Spec(2:end-1);
 
 freq_vec = Fs*(0:(L/2))/L;
+
+% construct complex FFT 
+y = deval(ODESol_struct,t_sample,2);
+z=x+1j*y;
+Z = fft(z)/L;
+cfreq = Fs*[  (0:(L/2-1)) , (-L/2):-1 ]/L;
+%sort into ascending frequency order
+[cfreq,ix]=sort(cfreq);
+Z=Z(ix);
+
 end
 
 function plot_farey(mini,maxi,xmax)
@@ -228,12 +303,15 @@ end
 plot3(zeros(size([seqs;seqs])),[seqs;seqs],[maxi*ones(size(seqs));mini*ones(size(seqs))],'-','Color',[0.9,0.9,0.9]);
 end
 
-function [parname,parvalues]=find_varying_parameter(pars)
+function [parname,parvalues]=find_varying_parameter(pars,sols)
 list_of_fields=fieldnames(pars);
 for i=1:length(list_of_fields)
     if ~ range(pars.(list_of_fields{i}))==0
         parname=list_of_fields{i};
         parvalues=pars.(list_of_fields{i});
+    else
+        parname='ICs';
+        parvalues=1:length(sols);
     end
 end
 end

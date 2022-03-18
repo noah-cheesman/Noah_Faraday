@@ -1,10 +1,10 @@
-function [sols,Pars]=sim_wrap(pars)
+function [sols,Pars]=sim_wrap(pars,wics)
 %close all
-
+diffwix=0;
 if nargin==0
 %constant values of each parameter
 pars.epsilon=0.1;
-pars.I__d=0.001;
+pars.beta=0.001;
 pars.h=2;
 pars.alpha=1;
 pars.k=0;
@@ -20,27 +20,32 @@ end
 
 %my grid makes all
 Pars=mygrid(pars);
-dims=size(Pars.delta);N=max(dims);
+dims=size(Pars.delta);N2=max(dims);N3=size(wics,1);
+N=max([N2,N3]);
 
 % Make empty cell array for solution structures
 sols={};
 if max(dims(dims<N))>1
     disp('only vary one parameter');
 else
-    for i=1:N
+    for itemp=1:N
+        i=min([itemp,N2]);
         % if you'd like to hard code the IC
-        Wic=[0.01;0;0;0;0.01;Pars.omega(i)];
+        if itemp==1 || diffwix==0
+        %Wic=[0.01;0;0;0;0.01;Pars.omega(i)];
+        Wic=wics(min([itemp,N3]),:)';
+        end
 
-        sol=integrator(Pars.epsilon(i),Pars.I__d(i),Pars.h(i),...
+        sol=integrator(Pars.epsilon(i),Pars.beta(i),Pars.h(i),...
             Pars.alpha(i),Pars.k(i),Pars.T(i),Pars.c(i),Pars.c_theta(i),...
             Pars.omega(i),Pars.delta(i),Pars.g(i),Wic);
         W=sol.y;
-        sols{i}=sol;
+        sols{itemp}=sol;
         Wic=W(:,end);
         
         
         % to check on integration progress
-        disp([num2str(100*i/N),'% complete'])
+        disp([num2str(100*itemp/N),'% complete'])
         
     end
 end
