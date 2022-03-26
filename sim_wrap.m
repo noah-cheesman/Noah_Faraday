@@ -1,6 +1,7 @@
 function [sols,Pars]=sim_wrap(pars,wics)
 %close all
 diffwix=0;
+updatewix=1;
 if nargin==0
 %constant values of each parameter
 pars.epsilon=0.1;
@@ -31,9 +32,15 @@ else
     for itemp=1:N
         i=min([itemp,N2]);
         % if you'd like to hard code the IC
-        if itemp==1 || diffwix==0
+        if itemp==1 
         %Wic=[0.01;0;0;0;0.01;Pars.omega(i)];
         Wic=wics(min([itemp,N3]),:)';
+        elseif updatewix==1
+        Wic=W(:,end);
+        elseif diffwix==0
+            Wic=wics(min([itemp,N3]),:)';
+        else
+            Wic=wics(1,:)';
         end
 
         sol=integrator(Pars.epsilon(i),Pars.beta(i),Pars.h(i),...
@@ -41,7 +48,6 @@ else
             Pars.omega(i),Pars.delta(i),Pars.g(i),Wic);
         W=sol.y;
         sols{itemp}=sol;
-        Wic=W(:,end);
         
         
         % to check on integration progress

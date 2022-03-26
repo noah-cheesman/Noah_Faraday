@@ -2,13 +2,21 @@ function make_data_figures(sols,pars,currDate)
 [parname,parvalues]=find_varying_parameter(pars,sols);
 xtix=cellstr(num2str((parvalues)))';
 
+colours=[[0, 0.4470, 0.7410];...
+[0.8500, 0.3250, 0.0980];...
+[0.9290, 0.6940, 0.1250];...
+[0.4940, 0.1840, 0.5560];...
+[0.4660, 0.6740, 0.1880];...
+[0.3010, 0.7450, 0.9330];...
+[0.6350, 0.0780, 0.1840]];
+
 
 
 figures(1)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
 for i =1:length(sols)
     W=sols{i}.y;
     % how much would you like to plot? Last 0.1 of time?
-    last=0.1;
+    last=0.3;
     W=W(:,ceil(end*(1-last)):end);
     % plot orbits in yz with parameter iterate in x axis
     plot3(i*ones(size(W(1,:))),W(1,:),W(2,:),'-')
@@ -47,7 +55,8 @@ for i =1:length(sols)
     xs=W(1,:).*cos(W(3,:))+W(2,:).*sin(W(3,:));
     ys=-W(1,:).*sin(W(3,:))+W(2,:).*cos(W(3,:));
     % as with previous plot but now in rotating frame
-    plot3(i*ones(size(xs)),xs,ys,'-')
+    plot3(i*ones(size(xs)),xs,ys,'-','color',colours(i,:))
+    plot3(i,xs(end),ys(end),'.','color',colours(i,:))
 end
 xlabel(parname)
 xticks(1:length(parvalues));
@@ -125,7 +134,7 @@ for i =1:length(sols)
         omega=pars.omega;
     end
     [~,freq_vec,Spec]=perfect(sol,omega);
-    freq=pars.omega^2;
+    freq=omega^2;
     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
     maxi=max([maxi,max(log(Spec))]);
     mini=min([mini,min(log(Spec))]);
@@ -151,7 +160,7 @@ for i =1:length(sols)
         omega=pars.omega;
     end
     [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
-    freq=pars.omega^2;
+    freq=omega^2;
     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
     maxi=max([maxi,max(log(Spec))]);
     mini=min([mini,min(log(Spec))]);
@@ -167,18 +176,17 @@ maxi=[];
 mini=[];
 for i =1:length(sols)
     sol=sols{i};
-    if length(pars.omega)>1
-        omega=pars.omega(i);
-    else
-        omega=pars.omega;
-    end
+    [omega,omega_s]=omegas(pars,i);
     [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
-    freq=omega^2;
-%     plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
-    plot3(i*ones(size(cfreq)),cfreq/freq,log(abs(Z)),'-')
+    cfreq=cfreq/omega;
+    freq=omega_s;
+    freq2=cfreq/freq;
+    Z=Z(abs(freq2)<3);
+    freq2=freq2(abs(freq2)<3);
+    plot3(i*ones(size(freq2)),freq2,log(abs(Z)),'-')
     maxi=max([maxi,max(log(abs(Z)))]);
     mini=min([mini,min(log(abs(Z)))]);
-     ylim([ -10 10])
+     ylim([ -3 3])
 end
 % plot_farey_3d(mini,maxi,ceil(xmax))
 ylabel('$\omega/\Omega$','Interpreter','Latex');
@@ -305,13 +313,17 @@ end
 
 function [parname,parvalues]=find_varying_parameter(pars,sols)
 list_of_fields=fieldnames(pars);
+found=0;
 for i=1:length(list_of_fields)
     if ~ range(pars.(list_of_fields{i}))==0
         parname=list_of_fields{i};
         parvalues=pars.(list_of_fields{i});
-    else
-        parname='ICs';
-        parvalues=1:length(sols);
+        found=1;
     end
 end
+if found==0
+        parname='ICs';
+        parvalues=1:length(sols);
 end
+end
+

@@ -60,11 +60,7 @@ for i =1:length(sols)
     W=W(:,ceil(end*(1-last)):end);
     t=t(ceil(end*(1-last)):end);
     writetable(array2table([t',W(6,:)'],'VariableNames',{'t','thetadot'}),[currDate,'/dat5_',num2str(i),'.txt']);
-    if length(pars.T)>1
-    omega_s=pars.omega(i)*pars.T(i)/(pars.T(i)+pars.c_theta(i));
-    else
-        omega_s=pars.omega*pars.T/(pars.T+pars.c_theta);
-    end
+    
     %plot([min(t),max(t)],omega_s*[1,1],'--')
 end
 
@@ -79,13 +75,10 @@ end
 
 for i =1:length(sols)
     sol=sols{i};
-    if length(pars.omega)>1
-        omega=pars.omega(i);
-    else
-        omega=pars.omega;
-    end
+    [omega,omega_s]=omegas(pars,i);
     [~,freq_vec,Spec]=perfect(sol,omega);
-    freq=pars.omega^2;
+    freq_vec=freq_vec/omega;
+    freq=omega_s;
     freq2=freq_vec/freq;
     Spec=Spec(freq2<5);
     freq2=freq2(freq2<5);
@@ -93,13 +86,10 @@ for i =1:length(sols)
 end
 for i =1:length(sols)
     sol=sols{i};
-    if length(pars.omega)>1
-        omega=pars.omega(i);
-    else
-        omega=pars.omega;
-    end
+    [omega,omega_s]=omegas(pars,i);
     [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
-    freq=pars.omega^2;
+    freq_vec=freq_vec/omega;
+    freq=omega_s;
     freq2=freq_vec/freq;
     Spec=Spec(freq2<5);
     freq2=freq2(freq2<5);
@@ -108,13 +98,10 @@ end
 
 for i =1:length(sols)
     sol=sols{i};
-    if length(pars.omega)>1
-        omega=pars.omega(i);
-    else
-        omega=pars.omega;
-    end
+    [omega,omega_s]=omegas(pars,i);
     [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
-    freq=omega^2;
+    cfreq=cfreq/omega;
+    freq=omega_s;
     freq2=cfreq/freq;
     Z=Z(abs(freq2)<3);
     freq2=freq2(abs(freq2)<3);
@@ -236,13 +223,17 @@ end
 
 function [parname,parvalues]=find_varying_parameter(pars,sols)
 list_of_fields=fieldnames(pars);
+found=0;
 for i=1:length(list_of_fields)
     if ~ range(pars.(list_of_fields{i}))==0
         parname=list_of_fields{i};
         parvalues=pars.(list_of_fields{i});
-    else
-        parname='ICs';
-        parvalues=1:length(sols);
+        found=1;
     end
 end
+if found==0
+        parname='ICs';
+        parvalues=1:length(sols);
 end
+end
+
