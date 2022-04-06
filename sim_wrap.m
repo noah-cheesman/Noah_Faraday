@@ -1,7 +1,5 @@
 function [sols,Pars]=sim_wrap(pars,wics)
 %close all
-diffwix=0;
-updatewix=1;
 if nargin==0
 %constant values of each parameter
 pars.epsilon=0.1;
@@ -24,6 +22,8 @@ Pars=mygrid(pars);
 dims=size(Pars.delta);N2=max(dims);N3=size(wics,1);
 N=max([N2,N3]);
 
+update_ic=1;
+
 % Make empty cell array for solution structures
 sols={};
 if max(dims(dims<N))>1
@@ -31,21 +31,15 @@ if max(dims(dims<N))>1
 else
     for itemp=1:N
         i=min([itemp,N2]);
-        % if you'd like to hard code the IC
-        if itemp==1 
-        %Wic=[0.01;0;0;0;0.01;Pars.omega(i)];
-        Wic=wics(min([itemp,N3]),:)';
-        elseif updatewix==1
-        Wic=W(:,end);
-        elseif diffwix==0
-            Wic=wics(min([itemp,N3]),:)';
+        if itemp==1 || update_ic==0
+        Wic=wics(itemp,:)';
         else
-            Wic=wics(1,:)';
+            Wic=W(:,end);
         end
 
         sol=integrator(Pars.epsilon(i),Pars.beta(i),Pars.h(i),...
             Pars.alpha(i),Pars.k(i),Pars.T(i),Pars.c(i),Pars.c_theta(i),...
-            Pars.omega(i),Pars.delta(i),Pars.g(i),Wic);
+            Pars.omega(i),Pars.delta(i),Pars.g(i),Pars.isotropy(i),Wic);
         W=sol.y;
         sols{itemp}=sol;
         

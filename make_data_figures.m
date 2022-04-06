@@ -1,6 +1,7 @@
 function make_data_figures(sols,pars,currDate)
 [parname,parvalues]=find_varying_parameter(pars,sols);
 xtix=cellstr(num2str((parvalues)))';
+set(0,'defaultFigureRenderer','Painters');
 
 colours=[[0, 0.4470, 0.7410];...
 [0.8500, 0.3250, 0.0980];...
@@ -11,12 +12,12 @@ colours=[[0, 0.4470, 0.7410];...
 [0.6350, 0.0780, 0.1840]];
 
 
-
-figures(1)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figcount=1;
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     W=sols{i}.y;
     % how much would you like to plot? Last 0.1 of time?
-    last=0.3;
+    last=0.2;
     W=W(:,ceil(end*(1-last)):end);
     % plot orbits in yz with parameter iterate in x axis
     plot3(i*ones(size(W(1,:))),W(1,:),W(2,:),'-')
@@ -27,9 +28,10 @@ xticklabels(xtix)
 view(-45,30)
 ylabel('$x$','Interpreter','Latex')
 zlabel('$y$','Interpreter','Latex')
-title('Orbits in stationary frame','Interpreter','Latex')
+%title('Orbits in stationary frame','Interpreter','Latex')
 
-figures(2)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+if 1==0
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     W=sols{i}.y;
     % how much would you like to plot? Last 0.1 of time?
@@ -45,8 +47,9 @@ view(-45,30)
 ylabel('$x$','Interpreter','Latex')
 zlabel('$y$','Interpreter','Latex')
 title('Orbits in stationary frame','Interpreter','Latex')
+end
 
-figures(3)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     W=sols{i}.y;
     last=0.1;
@@ -55,8 +58,8 @@ for i =1:length(sols)
     xs=W(1,:).*cos(W(3,:))+W(2,:).*sin(W(3,:));
     ys=-W(1,:).*sin(W(3,:))+W(2,:).*cos(W(3,:));
     % as with previous plot but now in rotating frame
-    plot3(i*ones(size(xs)),xs,ys,'-','color',colours(i,:))
-    plot3(i,xs(end),ys(end),'.','color',colours(i,:))
+    plot3(i*ones(size(xs)),xs,ys,'-','color',colours(mod(i-1,7)+1,:))
+    plot3(i,xs(end),ys(end),'.','color',colours(mod(i-1,7)+1,:))
 end
 xlabel(parname)
 xticks(1:length(parvalues));
@@ -66,8 +69,9 @@ ylabel('$\tilde{x}$','Interpreter','Latex')
 zlabel('$\tilde{y}$','Interpreter','Latex')
 title('Orbits in rotating frame','Interpreter','Latex')
 
+if 1==0
 % plots hi low bifurcation diagram
-figures(4)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     W=sols{i}.y;
     last=0.1;
@@ -88,7 +92,7 @@ ylabel('$\tilde{x}$','Interpreter','Latex')
 title('min/max $\tilde{x}$ bif diagram','Interpreter','Latex')
 
 
-figures(5)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     W=sols{i}.y;
     t=sols{i}.x;
@@ -105,10 +109,10 @@ for i =1:length(sols)
 end
 ylabel('$\dot{\theta}$','Interpreter','Latex');
 xlabel('$t$','Interpreter','Latex');
-title('angular velocity of rotor compared to driven speed','Interpreter','Latex')
+%title('angular velocity of rotor compared to driven speed','Interpreter','Latex')
 
 
-figures(6)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 for i =1:length(sols)
     We=sols{i}.ye;
     last=0.1;
@@ -120,9 +124,9 @@ xlabel(parname)
 xticks(1:length(parvalues));
 xticklabels(xtix)
 title('Poincare section bif diagram','Interpreter','Latex')
+end
 
-
-figures(7)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 maxi=[];
 mini=[];
 xmax=1;
@@ -141,15 +145,16 @@ for i =1:length(sols)
     ylim([ 0 xmax])
 end
 plot_farey_3d(mini,maxi,ceil(xmax))
+zlim([mini,maxi])
 ylabel('$\omega/\Omega$','Interpreter','Latex');
-zlabel('log$|F(\omega/\Omega|$','Interpreter','Latex');
+zlabel('log$|\iota_\mathrm{res}(\omega/\Omega|$','Interpreter','Latex');
 xlabel(parname)
 xticks(1:length(parvalues));
 xticklabels(xtix)
 view(90,00);
-title('fft of $I_\mathrm{res}$','Interpreter','Latex');
+%title('fft of $I_\mathrm{res}$','Interpreter','Latex');
 
-figures(8)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 maxi=[];
 mini=[];
 for i =1:length(sols)
@@ -166,37 +171,66 @@ for i =1:length(sols)
     mini=min([mini,min(log(Spec))]);
     ylim([ 0 xmax])
 end
+plot_farey_3d(mini,maxi,1)
+zlim([mini,maxi])
 %plot_farey_3d(mini,maxi,ceil(xmax))
 ylabel('$\omega/\Omega$','Interpreter','Latex');
-title('fft of $x$','Interpreter','Latex');
+zlabel('$|\chi(\omega/\Omega)|$','Interpreter','Latex');
+%title('fft of $x$','Interpreter','Latex');
 view(90,00)
 
-figures(9)=figure('Units','Centimeters','Position',[7,7,7,7]);hold on;
+
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
+maxi=[];
+mini=[];
+for i =1:length(sols)
+    sol=sols{i};
+    if length(pars.omega)>1
+        omega=pars.omega(i);
+    else
+        omega=pars.omega;
+    end
+    [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
+    freq=omega^2;
+    plot3(i*ones(size(cfreq)),cfreq/freq,log(abs(Z)),'-')
+    maxi=max([maxi,max(log(abs(Z)))]);
+    mini=min([mini,min(log(abs(Z)))]);
+    ylim([ -3 3])
+end
+mini=max([mini,-1/eps]);
+plot_farey_3d(mini,maxi,1)
+zlim([mini,maxi])
+%plot_farey_3d(mini,maxi,ceil(xmax))
+ylabel('$\omega/\Omega$','Interpreter','Latex');
+zlabel('$|\zeta(\omega/\Omega)|$','Interpreter','Latex');
+%title('fft of $x$','Interpreter','Latex');
+view(90,00)
+
+figures(figcount)=figure('Units','Centimeters','Position',[7,7,6,6]);hold on;figcount=figcount+1;
 maxi=[];
 mini=[];
 for i =1:length(sols)
     sol=sols{i};
     [omega,omega_s]=omegas(pars,i);
-    [freq_vec,Spec,Z,cfreq]=perfect_x(sol,omega);
-    cfreq=cfreq/omega;
-    freq=omega_s;
-    freq2=cfreq/freq;
-    Z=Z(abs(freq2)<3);
-    freq2=freq2(abs(freq2)<3);
-    plot3(i*ones(size(freq2)),freq2,log(abs(Z)),'-')
-    maxi=max([maxi,max(log(abs(Z)))]);
-    mini=min([mini,min(log(abs(Z)))]);
-     ylim([ -3 3])
+    [freq_vec,Spec,thetadot,t_sample]=perfect_thetadot(sol,omega);
+    freq=omega^2;
+    plot3(i*ones(size(freq_vec)),freq_vec/freq,log(Spec),'-')
+    maxi=max([maxi,max(log(Spec))]);
+    mini=min([mini,min(log(Spec))]);
+    ylim([ 0 xmax])
 end
-% plot_farey_3d(mini,maxi,ceil(xmax))
+axo=gca;
+minimaxi=axo.ZLim;
+plot_farey_3d(min(minimaxi),max(minimaxi),ceil(xmax))
 ylabel('$\omega/\Omega$','Interpreter','Latex');
-title('fft of $x+ j y $','Interpreter','Latex');
+zlabel('$|\varphi(\omega/\Omega)|$','Interpreter','Latex');
+%title('fft of $x+ j y $','Interpreter','Latex');
 view(90,00)
 
-
-for figcount=1:length(figures)
+numfigs=figcount;
+for figcount=1:numfigs-1
     savefig(figures(figcount),[currDate,'/fig',num2str(figcount),'.fig'])
-    saveas(figures(figcount),[currDate,'/fig',num2str(figcount),'.pdf'])
+    saveas(figures(figcount),[currDate,'/fig',num2str(figcount),'.svg'])
 end
 
 end
@@ -318,12 +352,13 @@ for i=1:length(list_of_fields)
     if ~ range(pars.(list_of_fields{i}))==0
         parname=list_of_fields{i};
         parvalues=pars.(list_of_fields{i});
+        %parvalues=1:length(pars.(list_of_fields{i}));
         found=1;
     end
 end
 if found==0
         parname='ICs';
-        parvalues=1:length(sols);
+        parvalues=(1:length(sols))';
 end
 end
 

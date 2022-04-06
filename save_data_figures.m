@@ -12,20 +12,21 @@ for i =1:length(sols)
     writetable(array2table([W',i*ones(max(size(W)),1)],'VariableNames',{'w1','w2','w3','w4','w5','w6','i'}),[currDate,'/dat1_',num2str(i),'.txt']);
 end
 
-
+if 1==0
 for i =1:length(sols)
     W=sols{i}.y;
     % how much would you like to plot? Last 0.1 of time?
-    last=0.01;
+    last=0.05;
     W=W(:,ceil(end*(1-last)):end);
     % plot orbits in yz with parameter iterate in x axis
     writetable(array2table([W',i*ones(max(size(W)),1)+0.25*(W(4,:)')/max(W(4,:))],'VariableNames',{'w1','w2','w3','w4','w5','w6','it'}),[currDate,'/dat2_',num2str(i),'.txt']);
+end
 end
 
 
 for i =1:length(sols)
     W=sols{i}.y;
-    last=0.01;
+    last=0.5;
     W=W(:,ceil(end*(1-last)):end);
     % transform to rotating frame
     xs=W(1,:).*cos(W(3,:))+W(2,:).*sin(W(3,:));
@@ -35,7 +36,7 @@ for i =1:length(sols)
 end
 
 % plots hi low bifurcation diagram
-
+if 1==0
 for i =1:length(sols)
     W=sols{i}.y;
     last=0.1;
@@ -71,7 +72,7 @@ for i =1:length(sols)
     We=We(:,ceil(end*(1-last)):end);
     writetable(array2table([We',i*ones(size(We(1,:)'))],'VariableNames',{'we1','we2','we3','we4','we5','we6','it'}),[currDate,'/dat6_',num2str(i),'.txt']);
 end
-
+end
 
 for i =1:length(sols)
     sol=sols{i};
@@ -84,6 +85,7 @@ for i =1:length(sols)
     freq2=freq2(freq2<5);
     writetable(array2table([freq2',Spec'],'VariableNames',{'freqs','specs'}),[currDate,'/dat7_',num2str(i),'.txt']);
 end
+
 for i =1:length(sols)
     sol=sols{i};
     [omega,omega_s]=omegas(pars,i);
@@ -184,41 +186,6 @@ cfreq = Fs*[  (0:(L/2-1)) , (-L/2):-1 ]/L;
 [cfreq,ix]=sort(cfreq);
 Z=Z(ix);
 
-end
-
-
-function plot_farey(mini,maxi,xmax)
-seq=farey_sequence(8);
-seqs=seq;
-for j=1:xmax
-seqs=[seqs,seq+j];
-end
-% i tried to do farey sequence grid but it didn't seem to work
-% ax=gca;
-% grid minor
-% ax.YAxis.MinorTick='on';
-% ax.YGrid = 'on';
-% ax.XGrid = 'off';
-% ax.ZGrid = 'off';
-% ax.YAxis.MinorTickValues=(unique(seqs,'sorted'));
-plot([seqs;seqs],[maxi*ones(size(seqs));mini*ones(size(seqs))],'-','Color',[0.9,0.9,0.9]);
-end
-
-function plot_farey_3d(mini,maxi,xmax)
-seq=farey_sequence(7);
-seqs=seq;
-for j=1:xmax
-seqs=[seqs,seq+j];
-end
-% i tried to do farey sequence grid but it didn't seem to work
-% ax=gca;
-% grid minor
-% ax.YAxis.MinorTick='on';
-% ax.YGrid = 'on';
-% ax.XGrid = 'off';
-% ax.ZGrid = 'off';
-% ax.YAxis.MinorTickValues=(unique(seqs,'sorted'));
-plot3(zeros(size([seqs;seqs])),[seqs;seqs],[maxi*ones(size(seqs));mini*ones(size(seqs))],'-','Color',[0.9,0.9,0.9]);
 end
 
 function [parname,parvalues]=find_varying_parameter(pars,sols)

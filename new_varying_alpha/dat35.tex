@@ -1,0 +1,30 @@
+\documentclass[crop,tikz]{standalone}% 'crop' is the default for v1.0, before it was 'preview'
+
+\usepackage{pgfplots}
+\newcommand{\vdh}{Van der Heijden}
+\pgfplotsset{compat=1.18}
+
+\definecolor{md1}{rgb}{0, 0.4470, 0.7410}
+\definecolor{md2}{rgb}{0.8500, 0.3250, 0.0980}
+\definecolor{md3}{rgb}{0.9290, 0.6940, 0.1250}
+\definecolor{md4}{rgb}{0.4940, 0.1840, 0.5560}
+\definecolor{md5}{rgb}{0.4660, 0.6740, 0.1880}
+\definecolor{md6}{rgb}{0.3010, 0.7450, 0.9330}
+\definecolor{md7}{rgb}{0.6350, 0.0780, 0.1840}
+\definecolor{matlab1}{rgb}{0, 0.4470, 0.7410}
+\definecolor{matlab2}{rgb}{0.8500, 0.3250, 0.0980}
+\definecolor{matlab3}{rgb}{0.9290, 0.6940, 0.1250}
+\definecolor{matlab4}{rgb}{0.4940, 0.1840, 0.5560}
+
+
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[view={-45}{30},
+	width=8cm,height=5cm,
+	xlabel=$\tilde{x}$,ylabel=$\tilde{y}$
+]
+\addplot[color=md3, mark=none] table[x=xt,y=yt,col sep=comma]{dat3_5.txt};
+\end{axis}
+\end{tikzpicture}
+\end{document}

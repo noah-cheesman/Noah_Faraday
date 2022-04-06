@@ -1,32 +1,67 @@
 pars.epsilon=0.1;
 pars.beta=0.01;
-pars.h=20;
-pars.alpha=0.9;
-pars.k=0.1;
+pars.h=0;
+pars.isotropy=1;
 pars.T=500;
-pars.c=0.01;
+pars.k=0.1/1.4;
+pars.k=0;
+%pars.alpha=linspace(1/1.7,1/1.65,10)';
+pars.alpha=linspace(0.59814,0.61028,5)';
+%pars.alpha=0.9/1.4;
+pars.c=0.05;
 pars.c_theta=0;
-pars.omega=1.4;
-pars.delta=0.12;
+pars.isotropy=1;
+pars.omega=1;
+pars.delta=0.16235;
+%pars.delta=0.12;
+%pars.delta=fliplr(linspace(0.08,0.09,6))';
 pars.g=0;
-%vary one parameter
-%pars.delta=linspace(0,0.4,11)';
-pars.delta=linspace(0,0.1,5)';
-%pars.k=linspace(0.5,1.3,5)';
-Wic=[   0.01,0,0,0,0.01,pars.omega;...
-        0.1,0,0,0,0.1,pars.omega;...
-        0.5,0,0,0,0.5,pars.omega;];
-Wic=[   0.01,0,0,0,0.01,pars.omega;...
-        0.1,0,0,0,0.1,pars.omega];
-    Wic=[0.09,0,0,0,0.095,pars.omega];
-    
-    
-%pars.epsilon=0.1;pars.I__d=0.01;pars.h=20;pars.alpha=1;pars.k=0;
-%pars.T=500;pars.c=0.01;pars.c_theta=0;pars.omega=1.4;pars.delta=0.2;pars.g=0;
-% vary one parameter
-%pars.omega=[1.58973459023457,1.389684894,1.3236765479,1.202356,1.1496545678]';
+pars.epsilon=0.1;
 
+%vary one parameter
+pars.epsilon=0.1;
+
+disp(['delta_crit=',num2str((pars.epsilon.*sqrt(1-pars.c.^2)./(pars.k+pars.alpha))')]);
+Wic=[];
+
+NUM=max([length(pars.c),length(pars.k),length(pars.epsilon),length(pars.omega),length(pars.delta),length(pars.alpha)]);
+for num=1:NUM
+    epsilon=pars.epsilon(min([num,length(pars.epsilon)]));
+    omega=pars.omega(min([num,length(pars.omega)]));
+    c=pars.c(min([num,length(pars.c)]));
+    k=pars.k(min([num,length(pars.k)]))+pars.alpha(min([num,length(pars.alpha)]));
+x0 = epsilon*(-omega^2+k)*omega.^2/(omega^4+(c^2-2*k)*omega^2+k^2);
+y0 = -omega^3/(omega^4+(c^2-2*k)*omega^2+k^2)*c*epsilon;
+u0 = epsilon*omega^4*c/(omega^4+(c^2-2*k)*omega^2+k^2);
+v0 = epsilon*(-omega^2+k)*omega^3/(omega^4+(c^2-2*k)*omega^2+k^2);
+theta0=0;
+thetadot0=omega;
+
+%Wic=[Wic;x0,y0,theta0,u0,v0,thetadot0; x0+0.01,y0,theta0,u0,v0+0.01,thetadot0; x0+0.2,y0,theta0,u0,v0+0.02,thetadot0;x0,y0,theta0,u0,v0,thetadot0+0.02; x0+0.05,y0,theta0,u0,v0+0.05,thetadot0;];
+% Wic=[Wic;...
+%     x0,y0,theta0,u0,v0*3.20,thetadot0;...
+%     x0,y0,theta0,u0,v0*1.00,thetadot0;...
+%     x0,y0,theta0,u0,v0*1.20,thetadot0;...
+%     x0,y0,theta0,u0,v0*1.40,thetadot0;...
+%     x0,y0,theta0,u0,v0*1.60,thetadot0;...
+%     x0,y0,theta0,u0,v0*1.80,thetadot0;...
+%     x0,y0,theta0,u0,v0*2.00,thetadot0...
+%     ];
+% Wic=[Wic;x0,y0,theta0,10*u0,10*v0,thetadot0;...
+%     -0.1658,-0.2747,0,0.0961,-0.2159,1.0000;...
+%     2*x0,2*y0,2*theta0,2*u0,v0,2*thetadot0;...
+%     ];
+%Wic=[x0,y0,theta0,10*u0,10*v0,thetadot0];
+Wic=[      0.1190,   -0.1701,         0,    0.0633,    0.1814,    1.0000];
+%Wic=[      0.3,   0,         0,    0,    0.22,    1.0000;...
+%    0.1,0,0,0,0.1,1;...
+%    -0.1,0,0,0,0.05,1;...
+%    -0.176,0,0,0,0,1;...
+%    -0.176,0,0,0,-0.1,1];
+
+end
 close all
+
 % Run integrator
 % inputs are the parameter values for the integration (only one can be a
 % vector
@@ -34,37 +69,15 @@ close all
 %   sols - a cell array of ode solution structures
 %   Pars - a structure of parameter values for a parameter sweep
 [sols,Pars]=sim_wrap(pars,Wic);
-% Run analysis on the data
-currDate = strrep(datestr(datetime), ':', '_');
-mkdir(currDate)
-save_parameters(currDate,pars)
 
-for i =1:length(sols)
-    sol=sols{i};
-    [omega,omega_s]=omegas(pars,i);
-    [ires,freq_vec,Spec,t]=perfect(sol,omega);
-    freq_vec=freq_vec/omega;
-    freq=omega_s;
-    freq2=freq_vec;
-    Spec=Spec(freq2<5);
-    freq2=freq2(freq2<5);
-    writetable(array2table([t(ceil(0.9*end:end))',ires(ceil(0.9*end:end))'],'VariableNames',{'t','ires'}),[currDate,'/IRES_',num2str(i),'.txt']);
-    writetable(array2table([freq2',Spec'],'VariableNames',{'freq','Spec'}),[currDate,'/IRESfft_',num2str(i),'.txt']);
+% Run analysis on the data and save to folder name
+% be careful not to overwrite
+foldername='multistability2';
+mkdir(foldername)
+save_parameters(foldername,pars)
+writematrix(Wic,[foldername,'/ICS.txt']);
+make_data_figures(sols,Pars,foldername);
+if 1==0
+save_data_figures(sols,Pars,foldername)
 end
-
-for i =1:length(sols)
-    sol=sols{i};
-    [omega,omega_s]=omegas(pars,i);
-    [freq_vec,Spec,Z,cfreq,x,t]=perfect_x(sol,omega);
-    freq_vec=freq_vec/omega;
-    freq=omega_s;
-    freq2=freq_vec;
-    Spec=Spec(freq2<5);
-    freq2=freq2(freq2<5);
-    writetable(array2table([t(ceil(0.9*end:end))',x(ceil(0.9*end:end))'],'VariableNames',{'t','x'}),[currDate,'/X_',num2str(i),'.txt']);
-    writetable(array2table([freq2',Spec'],'VariableNames',{'freq','Spec'}),[currDate,'/Xfft_',num2str(i),'.txt']);
-end
-
-%make_data_figures(sols,Pars,currDate); 
-%save_data_figures(sols,Pars,currDate)
-%
+disp('finished')

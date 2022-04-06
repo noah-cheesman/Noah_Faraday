@@ -1,0 +1,33 @@
+\documentclass[crop,tikz]{standalone}% 'crop' is the default for v1.0, before it was 'preview'
+
+\usepackage{pgfplots}
+\newcommand{\vdh}{Van der Heijden}
+\pgfplotsset{compat=1.18}
+
+\definecolor{md1}{rgb}{0, 0.4470, 0.7410}
+\definecolor{md2}{rgb}{0.8500, 0.3250, 0.0980}
+\definecolor{md3}{rgb}{0.9290, 0.6940, 0.1250}
+\definecolor{md4}{rgb}{0.4940, 0.1840, 0.5560}
+\definecolor{md5}{rgb}{0.4660, 0.6740, 0.1880}
+\definecolor{md6}{rgb}{0.3010, 0.7450, 0.9330}
+\definecolor{md7}{rgb}{0.6350, 0.0780, 0.1840}
+\definecolor{matlab1}{rgb}{0, 0.4470, 0.7410}
+\definecolor{matlab2}{rgb}{0.8500, 0.3250, 0.0980}
+\definecolor{matlab3}{rgb}{0.9290, 0.6940, 0.1250}
+\definecolor{matlab4}{rgb}{0.4940, 0.1840, 0.5560}
+
+
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[xmin=0,xmax=1,ymode=log,xlabel=$\omega/\Omega$,ylabel=$|\iota_\mathrm{res}(\omega/\Omega)|$,
+	width=8cm,height=5cm,
+	%extra x ticks={0,0.14286,0.16667,0.2,0.25,0.28571,0.33333,0.4,0.42857,0.5,0.57143,0.6,0.66667,0.71429,0.75,0.8,0.83333,0.85714,1},extra x tick labels={},extra tick style={grid=major}
+	]
+\addplot[color=md4, mark=none] table[x=freqs,y=specs,col sep=comma]{dat9_2.txt};
+\addplot[color=md3, mark=none] table[x=freqs,y=specs,col sep=comma]{dat9_3.txt};
+\addplot[color=md2, mark=none] table[x=freqs,y=specs,col sep=comma]{dat9_4.txt};
+\addplot[color=md1, mark=none] table[x=freqs,y=specs,col sep=comma]{dat9_5.txt};
+\end{axis}
+\end{tikzpicture}
+\end{document}

@@ -2,7 +2,7 @@ function [freq_vec,Spec,Z,cfreq,x,t_sample]=perfect_x(ODESol_struct,Omega)
 ts=ODESol_struct.x;
 %t_0 = ts(end)*0.75; %Where to start calculating Fourier transform from
 t_1=ts(end);
-t_0=0.75*ts(end);
+t_0=ts(1);
 
 Fs = 200;            % Sampling frequency                    
 T = 2*pi*Omega/Fs;    % Sampling period       

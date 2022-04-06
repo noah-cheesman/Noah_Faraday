@@ -1,0 +1,1 @@
+for fig in *.svg; do inkscape $fig --export-pdf="${fig%.*}".pdf; done
