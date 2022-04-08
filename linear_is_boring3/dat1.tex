@@ -22,12 +22,9 @@
 \begin{tikzpicture}
 \begin{axis}[view={-45}{30},
 	width=8cm,height=5cm,
-	xlabel=${x}$,ylabel=${y}$
+	xlabel=$x$,ylabel=$y$
 ]
-\addplot[color=md4, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_2.txt};
-\addplot[color=md3, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_3.txt};
-\addplot[color=md2, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_4.txt};
-\addplot[color=md1, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_5.txt};
+\addplot[color=md1] table[x=w1,y=w2,col sep=comma]{dat1_1.txt};
 \end{axis}
 \end{tikzpicture}
 \end{document}

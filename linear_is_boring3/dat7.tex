@@ -20,14 +20,16 @@
 
 \begin{document}
 \begin{tikzpicture}
-\begin{axis}[view={-45}{30},
+\begin{axis}[xmin=0,xmax=3,ymode=log,xlabel=$\omega/\Omega$,ylabel=$|\iota_\mathrm{res}(\omega/\Omega)|$,
 	width=8cm,height=5cm,
-	xlabel=${x}$,ylabel=${y}$
-]
-\addplot[color=md4, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_2.txt};
-\addplot[color=md3, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_3.txt};
-\addplot[color=md2, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_4.txt};
-\addplot[color=md1, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_5.txt};
+%	extra x ticks={0,0.14286,0.16667,0.2,0.25,0.28571,0.33333,0.4,0.42857,0.5,0.57143,0.6,0.66667,0.71429,0.75,0.8,0.83333,0.85714,1},extra x tick labels={},extra tick style={grid=major}
+	]
+%\addplot[color=md6, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_6.txt};
+%\addplot[color=md5, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_5.txt};
+%\addplot[color=md4, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_4.txt};
+%\addplot[color=md3, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_3.txt};
+%\addplot[color=md2, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_2.txt};
+\addplot[color=md1, mark=none] table[x=freqs,y=specs,col sep=comma]{dat7_1.txt};
 \end{axis}
 \end{tikzpicture}
 \end{document}

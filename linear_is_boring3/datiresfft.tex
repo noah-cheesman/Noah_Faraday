@@ -20,14 +20,9 @@
 
 \begin{document}
 \begin{tikzpicture}
-\begin{axis}[view={-45}{30},
-	width=8cm,height=5cm,
-	xlabel=${x}$,ylabel=${y}$
-]
-\addplot[color=md4, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_2.txt};
-\addplot[color=md3, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_3.txt};
-\addplot[color=md2, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_4.txt};
-\addplot[color=md1, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_5.txt};
+\begin{axis}[xmin=0,xmax=3,ymode=log,xlabel=$\omega$,ylabel=$|\iota_\mathrm{res}(\omega)|$,
+	width=8cm,height=5cm,extra tick style={grid=major}]
+\addplot[color=md1, mark=none] table[x=freq,y=Spec,col sep=comma]{IRESfft_1.txt};
 \end{axis}
 \end{tikzpicture}
 \end{document}

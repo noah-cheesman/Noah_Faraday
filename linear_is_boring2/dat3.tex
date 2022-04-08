@@ -22,12 +22,14 @@
 \begin{tikzpicture}
 \begin{axis}[view={-45}{30},
 	width=8cm,height=5cm,
-	xlabel=${x}$,ylabel=${y}$
+	xlabel=$\tilde{x}$,ylabel=$\tilde{y}$
 ]
-\addplot[color=md4, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_2.txt};
-\addplot[color=md3, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_3.txt};
-\addplot[color=md2, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_4.txt};
-\addplot[color=md1, mark=none] table[x=w1,y=w2,col sep=comma]{dat1_5.txt};
+\addplot[color=md6, mark=*,mark size=1pt] coordinates{(.0528640069180372,-0.00139840828420324)};
+\addplot[color=md5, mark=*,mark size=1pt] coordinates{(0.103793621267734,-0.00540243844978783)};
+\addplot[color=md4, mark=*,mark size=1pt] coordinates{(0.141855387326449,-0.0101167545115381)};
+\addplot[color=md3, mark=*,mark size=1pt] coordinates{(0.244138307936103,-0.0302974121960284)};
+\addplot[color=md2, mark=*,mark size=1pt] coordinates{(-0.343484592305086,-0.0609996236409919)};
+\addplot[color=md1, mark=*,mark size=1pt] coordinates{(-0.240100002419622,-0.0292874698231557)};
 \end{axis}
 \end{tikzpicture}
 \end{document}

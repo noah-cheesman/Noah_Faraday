@@ -2,17 +2,19 @@ pars.epsilon=0.1;
 pars.beta=0.01;
 pars.h=0;
 pars.isotropy=1;
-pars.T=500;
+pars.T=5;
 pars.k=0.1/1.4;
-pars.k=0;
+pars.k=[1/1.7,1/1.4,1,1.4,1.7,1.4^2,1.7^2]';
 %pars.alpha=linspace(1/1.7,1/1.65,10)';
-pars.alpha=linspace(0.59814,0.61028,5)';
+%pars.alpha=linspace(0.59814,0.61028,5)';
 %pars.alpha=0.9/1.4;
+pars.alpha=0;
 pars.c=0.05;
 pars.c_theta=0;
 pars.isotropy=1;
 pars.omega=1;
 pars.delta=0.16235;
+pars.delta=0;
 %pars.delta=0.12;
 %pars.delta=fliplr(linspace(0.08,0.09,6))';
 pars.g=0;
@@ -72,12 +74,12 @@ close all
 
 % Run analysis on the data and save to folder name
 % be careful not to overwrite
-foldername='multistability2';
+foldername='linear_is_boring3';
 mkdir(foldername)
 save_parameters(foldername,pars)
 writematrix(Wic,[foldername,'/ICS.txt']);
-make_data_figures(sols,Pars,foldername);
-if 1==0
+%make_data_figures(sols,Pars,foldername);
+if 1==1
 save_data_figures(sols,Pars,foldername)
 end
 disp('finished')
